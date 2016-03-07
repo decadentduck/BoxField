@@ -17,8 +17,16 @@ namespace BoxField
 
         //used to draw boxes on screen
         SolidBrush boxBrush = new SolidBrush(Color.White);
+        
+        List<Box> boxes = new List<Box>();
+        List<Box> boxesRight = new List<Box>();
+        List<Color> lColor = new List<Color>();
+        List<Color> rColor = new List<Color>();
 
-        //TODO - create a list of Boxes
+        Random ran = new Random();
+        int pattern = 1000;
+
+        int waitTime = 18;
 
         public GameScreen()
         {
@@ -28,6 +36,14 @@ namespace BoxField
         private void GameScreen_Load(object sender, EventArgs e)
         {
             //TODO - create initial box object and add it to list of Boxes
+            Box b = new Box(300, 0);
+            Box bb = new Box(600, 0);
+            Color c = Color.FromArgb(ran.Next(0, 250), ran.Next(0, 250), ran.Next(0, 250));
+            Color cc = Color.FromArgb(ran.Next(0, 250), ran.Next(0, 250), ran.Next(0, 250));
+            boxes.Add(b);
+            boxesRight.Add(bb);
+            lColor.Add(c);
+            rColor.Add(cc);
         }
 
         private void GameScreen_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -100,18 +116,75 @@ namespace BoxField
 
         private void gameLoop_Tick(object sender, EventArgs e)
         {
-            //TODO - update position of each box
+            waitTime--;
+            pattern--;
+            int x, xx, y;
+            x = 0;
+            xx = 0;
+            y = 0;
 
-            //TODO - remove box from list if it is off screen
+            if(waitTime == 0)
+            {
+
+                if (pattern <= -1000) { pattern = 1000; }
+                if (pattern > 0)
+                {
+                    if (x > 0)
+                    {
+                        x = x - 10;
+                        xx = xx - 10;
+                    }
+                    else { x = 450; xx = 750; }
+                }
+
+                else
+                {
+                    x= ran.Next(0, 400);
+                    xx = ran.Next(450, 800);
+                }
+
+                Box b = new Box(x, y);
+                Box bb = new Box(xx, y);
+                boxes.Add(b);
+                boxesRight.Add(bb);
+
+                Color c = Color.FromArgb(ran.Next(0, 250), ran.Next(0, 250), ran.Next(0, 250));
+                Color cc = Color.FromArgb(ran.Next(0, 250), ran.Next(0, 250), ran.Next(0, 250));
+                lColor.Add(c);
+                rColor.Add(cc);
+
+                waitTime = 20;
+            }
+
+            //update position of ALLL OF THE BOXESSS
+            for (int i = 0; i < boxes.Count; i++)
+            {
+                boxes[i].y += 2;
+                boxesRight[i].y += 2;
+            }
+            //remove THE BOX from list if it is off screen
+            if (boxes[0].y > this.Height)
+            {
+                boxes.RemoveAt(0);
+                boxesRight.RemoveAt(0);
+                lColor.RemoveAt(0);
+                rColor.RemoveAt(0);
+            }
 
             Refresh();
         }
 
         private void GameScreen_Paint(object sender, PaintEventArgs e)
         {
-            //TODO - draw each box to the screen
+            //draw ALL OF THE BOXES
+            for (int i = 0; i < boxes.Count; i++)
+            {
+                boxBrush.Color = lColor[i];
+                e.Graphics.FillRectangle(boxBrush, boxes[i].x, boxes[i].y, 30, 30);
+
+                boxBrush.Color = rColor[i];
+                e.Graphics.FillRectangle(boxBrush, boxesRight[i].x, boxesRight[i].y, 30, 30);
+            }
         }
-
-
     }
 }
